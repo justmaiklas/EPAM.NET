@@ -31,6 +31,7 @@ Each one of these directories consists of three more sub-directories:
 - WinForms
 
 **ClassLibrary** can not be executed directly, just a class.
+
 **ConsoleApp** can be executed in the following order:
 ```sh
 cd compiled/ConsoleApp
