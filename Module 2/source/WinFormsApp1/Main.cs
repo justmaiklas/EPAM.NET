@@ -15,10 +15,9 @@ namespace WinFormsApp1
 
         private void submitBtn_Click(object sender, EventArgs e)
         {
-            if (nameInput.Text == null)
+            if (nameInput.Text.Length == 0)
             {
-                //Name textField empty
-                MessageBox.Show(@"Name is empty");
+                MessageBox.Show(@"Hi mysterious entity. Your name is missing");
                 return;
             }
 
