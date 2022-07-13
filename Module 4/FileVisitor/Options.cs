@@ -8,12 +8,28 @@ namespace FileVisitor
 {
     public class Options
     {
-        public static string BasePath => GetProjectPath();
+        public string BasePath { get; set; }
+        
 
-        public static string GetProjectPath()
+        public Options()
+        {
+            BasePath = GetProjectPath();
+        }
+
+        public Options(string basePath)
+        {
+            BasePath = basePath;
+        }
+
+
+        public string GetProjectPath()
         {
             var currentDirectory = System.Environment.CurrentDirectory;
             var projectDirectory = Directory.GetParent(currentDirectory)?.Parent?.Parent;
+            if (projectDirectory == null)
+            {
+                throw new ArgumentNullException();
+            }
             
             return projectDirectory.FullName;
         }
