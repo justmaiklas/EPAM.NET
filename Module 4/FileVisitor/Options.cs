@@ -9,16 +9,19 @@ namespace FileVisitor
     public class Options
     {
         public string BasePath { get; set; }
+        public SearchFlag SearchFlag { get; }
         
 
-        public Options()
+        public Options(SearchFlag searchFlag = SearchFlag.IgnoreFlag)
         {
             BasePath = GetProjectPath();
+            SearchFlag = searchFlag;
         }
 
-        public Options(string basePath)
+        public Options(string basePath, SearchFlag searchFlag = SearchFlag.IgnoreFlag)
         {
             BasePath = basePath;
+            SearchFlag = searchFlag;
         }
 
 
@@ -33,5 +36,12 @@ namespace FileVisitor
             
             return projectDirectory.FullName;
         }
+    }
+
+    public enum SearchFlag
+    {
+        IgnoreFlag,
+        Abort,
+        Exclude
     }
 }

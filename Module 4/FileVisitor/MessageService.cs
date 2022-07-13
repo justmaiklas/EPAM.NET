@@ -12,11 +12,25 @@ namespace FileVisitor
         {
             _fileSystemVisitor.StartVisitEvent += HandleCustomEvent;
             _fileSystemVisitor.FinishVisitEvent += HandleCustomEvent;
+            _fileSystemVisitor.FileFoundEvent += FileFoundHandler;
+            _fileSystemVisitor.FolderFoundEvent += FolderFoundHandler;
+        }
+
+        private void FolderFoundHandler(object? sender, CustomEventArgs e)
+        {
+            Console.WriteLine($"Found Folder: {e.Message}");
+
+        }
+
+        private void FileFoundHandler(object? sender, CustomEventArgs e)
+        {
+            Console.WriteLine($"Found File: {e.Message}");
+
         }
 
         private void HandleCustomEvent(object sender, CustomEventArgs e)
         {
-            Console.WriteLine($"received this message: {e.Message}");
+            Console.WriteLine($"{e.Message}");
         }
     }
 }

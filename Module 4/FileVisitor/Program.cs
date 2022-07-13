@@ -10,8 +10,8 @@ namespace FileVisitor
     {
         public static void Main()
         {
-            
-            var fileSystemVisitor = new FileSystemVisitor(new Options(), folder => folder.FolderName == "bin");
+
+            var fileSystemVisitor = new FileSystemVisitor(new Options(), (folder, file) => folder.FolderName == "bin" || file.FileName == "FileVisitor");
             var messageService = new MessageService(fileSystemVisitor);
             
             fileSystemVisitor.StartVisit();
