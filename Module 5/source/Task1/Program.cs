@@ -1,10 +1,19 @@
-﻿namespace Task1
+﻿using System;
+
+namespace Task1
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            // TODO: Implement the task here.
+            try
+            {
+                LineReader.ReadLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
