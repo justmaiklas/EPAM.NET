@@ -10,7 +10,10 @@ namespace FileVisitor
     {
         public string BasePath { get; set; }
         public SearchFlag SearchFlag { get; }
-        
+        public readonly string SearchPattern = "*.*";
+        public readonly SearchOption SearchOptions = SearchOption.AllDirectories;
+
+
 
         public Options(SearchFlag searchFlag = SearchFlag.IgnoreFlag)
         {
@@ -34,7 +37,7 @@ namespace FileVisitor
                 throw new ArgumentNullException();
             }
             
-            return projectDirectory.FullName;
+            return projectDirectory.FullName + "\\FolderTest";
         }
     }
 
