@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace FileVisitor
 {
-    public class FileSystemVisitor
+    public class FileSystemVisitor : IFileSystemVisitor
     {
         private readonly Options _options;
         private readonly Func<Folder, bool>? _folderFilter;
         private readonly Func<File, bool>? _fileFilter;
-        private readonly Func<Folder, File, bool> _folderFileFilter;
-
-
         public FileSystemVisitor(Options options)
         {
             _options = options;
@@ -26,130 +23,128 @@ namespace FileVisitor
         {
             _fileFilter = fileFilter;
         }
-        public FileSystemVisitor(Options options, Func<Folder,bool> folderFilter, Func<File, bool> fileFilter) : this(options, folderFilter)
+        public FileSystemVisitor(Options options, Func<Folder, bool> folderFilter, Func<File, bool> fileFilter) : this(options, folderFilter)
         {
             _fileFilter = fileFilter;
         }
-        public FileSystemVisitor(Options options, Func<Folder, File, bool> folderFileFilter) : this(options)
-        {
-            _folderFileFilter = folderFileFilter;
-        }
-
         public event EventHandler<CustomEventArgs> StartVisitEvent;
         public event EventHandler<CustomEventArgs> FinishVisitEvent;
         public event EventHandler<CustomEventArgs> FileFoundEvent;
         public event EventHandler<CustomEventArgs> FolderFoundEvent;
+        public event EventHandler<CustomEventArgs> FilteredFileFoundEvent;
+        public event EventHandler<CustomEventArgs> FilteredFolderFoundEvent;
         protected virtual void OnStartVisit(CustomEventArgs e)
         {
             var raiseEvent = StartVisitEvent;
-            e.Message += $" at {DateTime.Now}";
+            if (raiseEvent == null) return;
+            e.Message += $"Started at {DateTime.Now}";
             raiseEvent(this, e);
         }
         protected virtual void OnFinishVisit(CustomEventArgs e)
         {
             var raiseEvent = FinishVisitEvent;
-            e.Message += $" at {DateTime.Now}";
+            if (raiseEvent == null) return;
+            e.Message += $"Finished at {DateTime.Now}";
             raiseEvent(this, e);
         }
         protected virtual void OnFileFound(CustomEventArgs e)
         {
             var raiseEvent = FileFoundEvent;
+            if (raiseEvent == null) return;
+            e.Message = $"Found file {e.Message} at {DateTime.Now}";
 
             raiseEvent(this, e);
         }
         protected virtual void OnFolderFound(CustomEventArgs e)
         {
             var raiseEvent = FolderFoundEvent;
+            if (raiseEvent == null) return;
+            e.Message = $"Found folder {e.Message} at {DateTime.Now}";
             raiseEvent(this, e);
         }
 
-        public void StartVisit()
+        protected virtual void OnFilteredFileFound(CustomEventArgs e)
         {
-            OnStartVisit(new CustomEventArgs("Started visiting"));
-            var rootFolder = new Folder
-            {
-                FolderName = "root",
-                FullPath = _options.BasePath
+            var raiseEvent = FilteredFileFoundEvent;
+            if (raiseEvent == null) return;
+            e.Message = $"Found filtered file {e.Message} at {DateTime.Now}";
 
-            };
-            var allFolders = new List<Folder>();
-            var allFiles = new List<File>();
-            GetFolderData(rootFolder, allFolders, allFiles);
-            OnFinishVisit(new CustomEventArgs("\nFinished visiting. Filtering.."));
-            Filter(allFolders, allFiles);
-            Console.WriteLine("Done");
-
+            raiseEvent(this, e);
+        }
+        protected virtual void OnFilteredFolderFound(CustomEventArgs e)
+        {
+            var raiseEvent = FilteredFolderFoundEvent;
+            if (raiseEvent == null) return;
+            e.Message = $"Found filtered folder {e.Message} at {DateTime.Now}";
+            
+            raiseEvent(this, e);
+        }
+        public string[] GetFoldersStringArray(string path)
+        {
+            return Directory.GetDirectories(path, _options.SearchPattern, _options.SearchOptions);
         }
 
-        private void Filter(List<Folder> allFolders, List<File> allFiles)
+        public string[] GetFilesStringArray(string path)
         {
-            if (_options.SearchFlag == SearchFlag.Exclude)
-            {
-                if (_folderFilter != null)
-                {
-                    allFolders = allFolders.Where(folder => !_folderFilter(folder)).ToList();
-                }
-                if (_fileFilter != null)
-                {
-                    allFiles = allFiles.Where(file => !_fileFilter(file)).ToList();
-                }
-                return;
-            }
-
+            return Directory.GetFiles(path, _options.SearchPattern, _options.SearchOptions);
         }
 
-
-        private void GetFolderData(Folder rootFolder, ICollection<Folder> allFolders, List<File> allFiles)
+        public IEnumerable<Folder> GetFolders(string path)
         {
-            GetCurrentDirectoryFiles(rootFolder, allFiles);
-            foreach (var subFolder in GetSubFolders(rootFolder))
-            {
-                OnFolderFound(new CustomEventArgs(subFolder.FolderName));
-                GetCurrentDirectoryFiles(subFolder, allFiles);
-                GetFolderData(subFolder, allFolders, allFiles);
-                rootFolder.SubFolders.Add(subFolder);
-                allFolders.Add(subFolder);
-
-            }
-
-        }
-
-        private IEnumerable<Folder> GetSubFolders(Folder rootFolder)
-        {
-            var subFoldersArray = Directory.GetDirectories(rootFolder.FullPath, "*.*", SearchOption.TopDirectoryOnly);
-            foreach (var directory in subFoldersArray)
+            var folders = GetFoldersStringArray(path);
+            foreach (var directory in folders)
             {
                 var folderInfo = new DirectoryInfo(directory);
-                
-                var subFolderToAdd = new Folder()
+
+                var folder = new Folder()
                 {
                     FolderName = folderInfo.Name,
                     FullPath = folderInfo.FullName,
-                    ParentFolder = rootFolder
                 };
+                OnFolderFound(new CustomEventArgs(folder.FolderName));
 
-
-                if (_folderFilter != null && !_folderFilter(subFolderToAdd))
-                {
-                    continue;
-                }
-
-                yield return subFolderToAdd;
+                yield return folder;
             }
         }
 
-        private void GetCurrentDirectoryFiles(Folder rootFolder, List<File> allFiles)
+        public IEnumerable<File> GetFiles(string path)
         {
-            var folderFiles = Directory.GetFiles(rootFolder.FullPath, "*.*", SearchOption.TopDirectoryOnly);
-            foreach (var file in folderFiles)
+            foreach (var file in GetFilesStringArray(path))
             {
                 var fileInfo = new FileInfo(file);
-                var fileToAdd = new File(fileInfo.Name, rootFolder);
+                var fileToAdd = new File()
+                {
+                    FileName = fileInfo.Name
+                };
                 OnFileFound(new CustomEventArgs(fileToAdd.FileName));
 
-                rootFolder.Files.Add(fileToAdd);
-                allFiles.Add(fileToAdd);
+                yield return fileToAdd;
             }
         }
+
+        public IEnumerable<Folder> GetFilteredFolders(ICollection<Folder> folders)
+        {
+            foreach (var folder in folders)
+            {
+                if (_folderFilter != null && !_folderFilter(folder)) continue;
+                OnFilteredFolderFound(new CustomEventArgs(folder.FolderName));
+
+                yield return folder;
+            }
+        }
+
+        public IEnumerable<File> GetFilteredFiles(ICollection<File> files)
+        {
+            foreach (var file in files)
+            {
+                if (_fileFilter != null && !_fileFilter(file)) continue;
+                OnFilteredFileFound(new CustomEventArgs(file.FileName));
+
+                yield return file;
+            }
+        }
+
+        
+
     }
 }
