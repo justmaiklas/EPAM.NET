@@ -28,6 +28,10 @@ namespace Task2
             {
                 throw new OverflowException("String value is too big", ex);
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Unknown error", ex);
+            }
         }
 
         private static long ParseNumber(string stringValue, bool isNegativeNumber)
