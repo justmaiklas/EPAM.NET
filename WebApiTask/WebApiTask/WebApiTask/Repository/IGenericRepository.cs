@@ -4,9 +4,10 @@
     {
         T? Get(Guid id);
         IEnumerable<T> GetAll();
-        Task Add(T entity);
-        void Delete(T entity);
-        void Update(T entity);
+        T? Add(T entity);
+        bool Delete(T entity);
+        bool Delete(Guid id);
+        T? Update(T entity);
     }
 
 }

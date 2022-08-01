@@ -6,14 +6,14 @@ using static Xunit.Assert;
 
 namespace FileVisitorTests
 {
-    public class UnitTest1
+    public class FileSystemVisitorTests
     {
         [Fact]
         public void GetsAllFolders()
         {
             //Arrange
             var options = new Options();
-            var _fileVisitor = new FileSystemVisitor(options);
+            var _fileVisitor = new FileVisitor.FileSystemVisitor(options);
 
             //Act
             var result = _fileVisitor.GetFolders(options.GetProjectPath());
@@ -26,7 +26,7 @@ namespace FileVisitorTests
         {
             //Arrange
             var options = new Options();
-            var _fileVisitor = new FileSystemVisitor(options);
+            var _fileVisitor = new FileVisitor.FileSystemVisitor(options);
 
             //Act
             var result = _fileVisitor.GetFiles(options.GetProjectPath());
@@ -40,7 +40,7 @@ namespace FileVisitorTests
             //Arrange
             var options = new Options();
             var filter = new Func<File, bool>(file => file.FileName.Contains("subfolderFile.txt"));
-            var _fileVisitor = new FileSystemVisitor(options, filter);
+            var _fileVisitor = new FileVisitor.FileSystemVisitor(options, filter);
 
             //Act
             var files = _fileVisitor.GetFiles(options.GetProjectPath());
@@ -57,7 +57,7 @@ namespace FileVisitorTests
             //Arrange
             var options = new Options();
             var filter = new Func<Folder, bool>(file => file.FolderName.Contains("Empty"));
-            var _fileVisitor = new FileSystemVisitor(options, filter);
+            var _fileVisitor = new FileVisitor.FileSystemVisitor(options, filter);
 
             //Act
             var folders = _fileVisitor.GetFolders(options.GetProjectPath());
@@ -76,7 +76,7 @@ namespace FileVisitorTests
             var folderFilter = new Func<Folder, bool>(file => file.FolderName.Contains("Empty"));
             var fileFilter = new Func<File, bool>(file => file.FileName.Contains("subfolderFile.txt"));
 
-            var fileVisitor = new FileSystemVisitor(options, folderFilter, fileFilter);
+            var fileVisitor = new FileVisitor.FileSystemVisitor(options, folderFilter, fileFilter);
 
             //Act
             var files = fileVisitor.GetFiles(options.GetProjectPath());
@@ -98,7 +98,7 @@ namespace FileVisitorTests
         public void FileFoundEventRaised()
         {
             var options = new Options();
-            var fileVisitor = new FileSystemVisitor(options);
+            var fileVisitor = new FileVisitor.FileSystemVisitor(options);
             var filesToFind = new string[] {"subfolderFile.txt", "rootFile.txt"};
             var actualMessage = "";
             fileVisitor.FileFoundEvent += delegate(object _, CustomEventArgs e) { actualMessage = e.Message; };
@@ -113,7 +113,7 @@ namespace FileVisitorTests
         public void FolderFoundEventRaised()
         {
             var options = new Options();
-            var fileVisitor = new FileSystemVisitor(options);
+            var fileVisitor = new FileVisitor.FileSystemVisitor(options);
             var foldersToFind = new[] {"Subfolder", "Empty"};
             var actualMessage = "";
             fileVisitor.FolderFoundEvent += delegate(object _, CustomEventArgs e) { actualMessage = e.Message; };
@@ -131,7 +131,7 @@ namespace FileVisitorTests
             //Arrange
             var options = new Options();
             var filter = new Func<File, bool>(file => file.FileName.Contains("subfolderFile.txt"));
-            var fileVisitor = new FileSystemVisitor(options, filter);
+            var fileVisitor = new FileVisitor.FileSystemVisitor(options, filter);
             var actualMessage = "";
             fileVisitor.FilteredFileFoundEvent += delegate(object _, CustomEventArgs e) { actualMessage = e.Message; };
 
@@ -153,7 +153,7 @@ namespace FileVisitorTests
             //Arrange
             var options = new Options();
             var filter = new Func<Folder, bool>(file => file.FolderName.Contains("Empty"));
-            var _fileVisitor = new FileSystemVisitor(options, filter);
+            var _fileVisitor = new FileVisitor.FileSystemVisitor(options, filter);
             var actualMessage = "";
             _fileVisitor.FilteredFolderFoundEvent += delegate(object _, CustomEventArgs e)
             {
