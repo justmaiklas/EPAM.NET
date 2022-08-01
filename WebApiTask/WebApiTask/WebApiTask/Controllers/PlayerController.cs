@@ -34,7 +34,7 @@ public class PlayerController : ControllerBase
             Id = Guid.NewGuid(),
             Name = name,
             Age = age,
-            Position = position}
+            Position = position
         };
         _playerService.CreatePlayer(player);
         return Ok(player);

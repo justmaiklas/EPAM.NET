@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApiTask.Models;
 using WebApiTask.Services;
 
@@ -7,6 +8,7 @@ namespace WebApiTask.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class TeamController : Controller
     {
         private readonly ITeamService _teamService;

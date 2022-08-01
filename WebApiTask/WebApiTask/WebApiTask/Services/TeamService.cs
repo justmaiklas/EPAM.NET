@@ -48,7 +48,7 @@ namespace WebApiTask.Services
             return _teamRepository.Update(team);
         }
 
-        public Team RemovePlayerFromTeam(Guid teamId, Guid playerId)
+        public Team? RemovePlayerFromTeam(Guid teamId, Guid playerId)
         {
             var team = _teamRepository.Get(teamId);
             if (team == null)

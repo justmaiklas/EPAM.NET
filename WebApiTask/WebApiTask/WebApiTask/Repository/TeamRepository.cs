@@ -3,7 +3,7 @@ using WebApiTask.Models;
 
 namespace WebApiTask.Repository
 {
-    public class TeamRepository : GenericRepository<Team>, IPlayerRepository
+    public class TeamRepository : GenericRepository<Team>, ITeamRepository
     {
         public TeamRepository(DatabaseContext context) : base(context)
         {
