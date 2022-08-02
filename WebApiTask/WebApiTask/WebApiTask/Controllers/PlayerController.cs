@@ -8,7 +8,7 @@ namespace WebApiTask.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
@@ -24,6 +24,7 @@ public class PlayerController : ControllerBase
     [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
     {
+        var player = _playerService.GetPlayerById(id);
         return Ok(_playerService.GetPlayerById(id));
     }
     [HttpPost]

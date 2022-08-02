@@ -13,12 +13,12 @@ namespace WebApiTask
         }
         public Player? GetPlayerById(Guid id)
         {
-            return id == Guid.Empty ? null : _playerRepository.Get(id);
+            return _playerRepository.Get(p => p.Id == id, player => player.Team!).FirstOrDefault();
         }
 
         public List<Player> GetAllPlayers()
         {
-            return _playerRepository.GetAll().ToList();
+            return _playerRepository.GetAll(player => player.Team!).ToList();
         }
 
         public Player? CreatePlayer(Player player)

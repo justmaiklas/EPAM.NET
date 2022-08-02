@@ -20,7 +20,8 @@ namespace WebApiTask.Repository
 
             modelBuilder.Entity<Player>().Property(e => e.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Team>().Property(e => e.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Team>().HasMany(e => e.Players);
+            modelBuilder.Entity<Team>().HasMany(e => e.Players).WithOne(e => e.Team).HasForeignKey(e => e.TeamId);
+            modelBuilder.Entity<Player>().Navigation(e => e.Team);
         }
 
         public DbSet<Team> Team { get; set; }

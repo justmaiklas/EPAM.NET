@@ -8,7 +8,7 @@ namespace WebApiTask.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TeamController : Controller
     {
         private readonly ITeamService _teamService;
@@ -19,6 +19,7 @@ namespace WebApiTask.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
+            var teams = _teamService.GetAllTeams();
             return Ok(_teamService.GetAllTeams());
         }
         [HttpGet("{id:guid}")]

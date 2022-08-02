@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using WebApiTask.Models;
 
 namespace WebApiTask.Repository
@@ -9,6 +10,12 @@ namespace WebApiTask.Repository
         {
             if (!context.Team.Any()) DatabaseContext.SeedTeams(context);
 
+        }
+
+        public List<Team> GetAllTeams()
+        {
+            var list = _context.Team.Include(t => t.Players).ToList();
+            return list;
         }
 
     }

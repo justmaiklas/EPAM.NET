@@ -8,8 +8,6 @@ namespace WebApiTask.Repository
         public PlayerRepository(DatabaseContext context) : base(context)
         {
             if (!context.Player.Any()) DatabaseContext.SeedPlayers(context);
-            
         }
-
     }
 }

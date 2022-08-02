@@ -1,23 +1,37 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace WebApiTask.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T :class
     {
-        private readonly DatabaseContext _context;
+        protected readonly DatabaseContext _context;
         public GenericRepository(DatabaseContext context)
         {
             _context = context;
         }
 
-        public T? Get(Guid id)
+        public IQueryable<T> Get(Expression<Func<T, bool>> predicate)
         {
-            return _context.Set<T>().Find(id);
+            return _context.Set<T>().Where(predicate);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> Get(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+        {
+            var query = Get(predicate);
+            var queryable = includes.Aggregate(query, (current, include) => current.Include(include));
+            return queryable;
+        }
+
+        public IQueryable<T> GetAll()
         {
             return _context.Set<T>();
+        }
+        public IQueryable<T> GetAll(params Expression<Func<T, object>>[] includes)
+        {
+            var query = GetAll();
+            return includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
         }
 
         public T? Add(T entity)
@@ -35,7 +49,7 @@ namespace WebApiTask.Repository
 
         public bool Delete(Guid id)
         {
-            _context.Set<T>().Remove(Get(id) ?? throw new InvalidOperationException());
+            //_context.Set<T>().Remove(Get(id) ?? throw new InvalidOperationException());
             _context.SaveChanges();
             
             return _context.Set<T>().Find(id) is null;
