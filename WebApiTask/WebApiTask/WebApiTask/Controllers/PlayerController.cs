@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiTask.Models;
@@ -25,6 +26,9 @@ public class PlayerController : ControllerBase
     public IActionResult GetById(Guid id)
     {
         var player = _playerService.GetPlayerById(id);
+        if (player == null) {
+            return NotFound();
+        }
         return Ok(_playerService.GetPlayerById(id));
     }
     [HttpPost]
@@ -37,8 +41,11 @@ public class PlayerController : ControllerBase
             Age = age,
             Position = position
         };
-        _playerService.CreatePlayer(player);
-        return Ok(player);
+        player = _playerService.CreatePlayer(player);
+        if (player == null) {
+            return BadRequest();
+        }
+        return Created("/api/player/getById/" + player.Id, player);
     }
     [HttpPut("{id:guid}")]
     public IActionResult Update(Guid id, string name, int age, string position)
@@ -48,17 +55,22 @@ public class PlayerController : ControllerBase
         {
             return NotFound();
         }
-        player.Name = name;
-        player.Age = age;
-        player.Position = position;
-        _playerService.UpdatePlayer(player);
-        return Ok(player);
+        if (player.Name == name && player.Age == age && player.Position == position) {
+            return NoContent();
+        }
+        var updatedPlayer = _playerService.UpdatePlayer(id, name, age, position);
+        return Ok(updatedPlayer);
         
     }
     [HttpDelete("{id:guid}")]
     public IActionResult Delete(Guid id)
     {
-        return Ok(_playerService.DeletePlayer(id));
+        var player = _playerService.DeletePlayer(id);
+        if (player == null)
+        {
+            return NotFound();
+        }
+        return NoContent();
     }
 
 }

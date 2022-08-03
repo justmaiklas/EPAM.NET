@@ -8,7 +8,7 @@ namespace WebApiTask.Services
         public List<Team> GetAllTeams();
         public Team? CreateTeam(Team team);
         public Team? UpdateTeam(Team team);
-        public bool DeleteTeam(Guid id);
+        public Team? DeleteTeam(Guid id);
         public Team? AddPlayerToTeam(Guid teamId, Guid playerId);
         public Team? RemovePlayerFromTeam(Guid teamId, Guid playerId);
     }

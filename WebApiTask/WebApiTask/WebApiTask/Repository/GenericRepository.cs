@@ -40,19 +40,13 @@ namespace WebApiTask.Repository
             _context.SaveChanges();
             return entity;
         }
-        public bool Delete(T entity)
+
+        public T? Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
             _context.SaveChanges();
-            return _context.Set<T>().Find(entity) is null;
-        }
 
-        public bool Delete(Guid id)
-        {
-            //_context.Set<T>().Remove(Get(id) ?? throw new InvalidOperationException());
-            _context.SaveChanges();
-            
-            return _context.Set<T>().Find(id) is null;
+            return entity;
         }
         
 

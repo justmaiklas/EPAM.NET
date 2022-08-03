@@ -9,8 +9,7 @@ namespace WebApiTask.Repository
         IQueryable<T> GetAll();
         IQueryable<T> GetAll(params Expression<Func<T, object>>[] includes);
         T? Add(T entity);
-        bool Delete(T entity);
-        bool Delete(Guid id);
+        T? Delete(T entity);
         T? Update(T entity);
     }
 

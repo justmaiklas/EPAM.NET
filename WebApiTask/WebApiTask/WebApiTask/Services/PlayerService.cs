@@ -26,23 +26,30 @@ namespace WebApiTask
             return _playerRepository.Add(player);
         }
 
-        public Player? UpdatePlayer(Player player)
+        public Player? UpdatePlayer(Guid id, string name, int age, string position)
         {
-            if (GetPlayerById(player.Id) is null)
+            var player = GetPlayerById(id);
+            if (player is null)
             {
-                throw new Exception("Player not found");
+                return null;
             }
+            player.Name = name;
+            player.Age = age;
+            player.Position = position;
+            
             return _playerRepository.Update(player);
 
         }
 
-        public bool DeletePlayer(Guid id)
+        public Player? DeletePlayer(Guid id)
         {
-            if (GetPlayerById(id) is null)
+            var player = GetPlayerById(id);
+            if (player is null)
             {
-                throw new Exception("Player not found");
+                return null;
             }
-            return _playerRepository.Delete(id);
+            _playerRepository.Delete(player);
+            return player;
         }
     }
 
