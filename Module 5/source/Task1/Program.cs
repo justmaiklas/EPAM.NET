@@ -6,14 +6,17 @@ namespace Task1
     {
         private static void Main(string[] args)
         {
-            try
-            {
-                LineReader.ReadLine();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            while (true) {
+                try
+                {
+                    var line = LineReader.ReadLine();
+                    Console.WriteLine(line[0]);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }            
         }
     }
 }

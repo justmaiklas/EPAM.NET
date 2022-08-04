@@ -7,31 +7,11 @@ namespace Task2
     {
         public int Parse(string stringValue)
         {
-            try
-            {
-                CheckForNull(stringValue);
-                var isNegativeNumber = FormatString(ref stringValue);
-                CheckForFormat(stringValue);
-                var number = ParseNumber(stringValue, isNegativeNumber);
-                CheckForOverFlow(number);
-                return (int)number;
-            }
-            catch (ArgumentNullException ex)
-            {
-                throw new ArgumentNullException("String value is null", ex);
-            }
-            catch (FormatException ex)
-            {
-                throw new FormatException("String value is not in correct format", ex);
-            }
-            catch (OverflowException ex)
-            {
-                throw new OverflowException("String value is too big", ex);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Unknown error", ex);
-            }
+            CheckForNull(stringValue);
+            var isNegativeNumber = FormatStringAndGetIsNegative(ref stringValue);
+            CheckForFormat(stringValue);
+            var number = ParseNumber(stringValue, isNegativeNumber);
+            return (int)number;
         }
 
         private static long ParseNumber(string stringValue, bool isNegativeNumber)
@@ -43,16 +23,16 @@ namespace Task2
                 var digit = c - '0';
                 number += digit;
             }
-
             if (isNegativeNumber)
             {
                 number *= -1;
             }
 
+            CheckForOverFlow(number);
             return number;
         }
 
-        private static bool FormatString(ref string stringValue)
+        private static bool FormatStringAndGetIsNegative(ref string stringValue)
         {
             stringValue = stringValue.Trim();
             var isNegativeNumber = false;
@@ -65,7 +45,6 @@ namespace Task2
             {
                 stringValue = stringValue[1..];
             }
-
             return isNegativeNumber;
         }
 
