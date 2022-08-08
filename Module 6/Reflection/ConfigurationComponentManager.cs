@@ -19,7 +19,12 @@ class ConfigurationComponentManager
         try
         {
             var appSettings = ConfigurationManager.AppSettings;
-            var result = appSettings[key] ?? "Not Found";
+            if (appSettings.Count == 0)
+            {
+                Console.WriteLine("App settings is empty! Creating new settings file");
+                SetDefaultValues();
+            }
+            var result = appSettings[key] ?? "0";
             Console.WriteLine($"Readed key {key} value is: {result}");
             return result;
         }
@@ -67,7 +72,6 @@ class ConfigurationComponentManager
             foreach (var property in properties)
             {
                 AddUpdateAppSettings(property.Name, "0");
-
             }
         }
         catch (ConfigurationErrorsException e)
